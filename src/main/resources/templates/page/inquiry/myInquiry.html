@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="b">
+    <div id="all" style="padding-top: 20px">
+        <div id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- breadcrumb-->
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <i class="fa fa-eye" style="padding-top: 2px"></i>当前位置:&nbsp;&nbsp;
+                                <li class="breadcrumb-item"><a href="/">主页</a></li>
+                                <li class="breadcrumb-item"><a href="/customer/personalCenter">个人中心</a></li>
+                                <li class="breadcrumb-item"><span th:text="${title}"></span></li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-lg-3">
+                        <div th:include="page/customer/menuLeft::#m"></div>
+                    </div>
+                    <div id="basket" class="col-lg-9" th:if="${inquiryList.size()<1}">
+                        <div class="box container">
+                            <h3>您还没有问诊记录,<a href="/inquiry/createInquiry">点我去添加</a></h3>
+                        </div>
+                    </div>
+                    <div id="basket" class="col-lg-9" th:if="${inquiryList.size()>=1}">
+                        <div class="box container">
+                                <p class="text-muted">您一共有 <span
+                                        th:text="${total}" style="color: orangered"></span> 个问诊记录</p>
+                                <div>
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th style="text-align: center">宠物头像</th>
+                                            <th style="text-align: center">宠物名称</th>
+                                            <th style="text-align: center">问诊时间</th>
+                                            <th style="text-align: center">操作</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="inquiry:${inquiryList}">
+                                            <td style="text-align: center">
+                                                <a th:href="@{'/inquiry/inquiryDetails?inquiryId='+${inquiry.id}}">
+                                                    <img th:src="@{'/static/images/petImage/'+${inquiry.pet.imageName}}"
+                                                         style="height: 40px;width: 40px" alt="图片不存在或已删除"></a>
+                                            </td>
+                                            <td style="text-align: center">
+                                                <span th:text="${inquiry.pet.name}"></span>
+                                            </td>
+                                            <td style="text-align: center;margin-top: 1px">
+                                                <span style="padding-top: 2px"
+                                                      th:text="${#dates.format(inquiry.createDate,'yyyy-MM-dd HH:mm:ss')}"></span>
+                                            </td>
+                                            <td style="text-align: center">
+                                                <a th:href="@{'/inquiry/inquiryDetails?inquiryId='+${inquiry.id}}"
+                                                   title="查看详情"><i class="fa fa-search"
+                                                                   style="font-size: 20px;color: #0099FF"></i></a>
+                                                <a th:href="@{'/inquiry/inquiryModify?inquiryId='+${inquiry.id}}"
+                                                   th:if="${inquiry.status==0}" title="修改"><i class="fa fa-pencil"
+                                                                                   style="font-size: 20px"></i></a>
+                                                <a th:href="@{'javascript:deleteInquiry('+${inquiry.id}+')'}"
+                                                   th:if="${inquiry.status==0}" title="删除"><i class="fa fa-trash-o"
+                                                                                       style="color: red;font-size: 20px"></i></a>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- /.table-responsive-->
+                                <div class="box-footer d-flex justify-content-between flex-column flex-lg-row">
+                                    <div>
+                                        <a href="/inquiry/createInquiry" type="button" class="btn btn-primary">去问诊</a>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="pages" th:if="${total>3}">
+                            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                                <ul class="pagination">
+                                    <div th:utext="${pageCode}" class="form-inline"></div>
+                                </ul>
+                            </nav>
+                        </div>
+                        <!-- /.box-->
+                    </div>
+                    <!-- /.col-lg-9-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

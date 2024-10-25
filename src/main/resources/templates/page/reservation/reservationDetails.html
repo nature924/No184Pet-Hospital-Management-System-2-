@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>预约单详情</title>
+</head>
+<body>
+<div id="b">
+    <div id="all" style="padding-top: 20px">
+        <div id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- breadcrumb-->
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <i class="fa fa-eye" style="padding-top: 2px"></i>当前位置:&nbsp;&nbsp;
+                                <li class="breadcrumb-item"><a href="/">主页</a></li>
+                                <li class="breadcrumb-item"><a href="/customer/personalCenter">个人中心</a></li>
+                                <li class="breadcrumb-item"><a href="/reservation/myReservation/list/1">预约记录</a></li>
+                                <li class="breadcrumb-item"><span th:text="${title}"></span></li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-lg-3">
+                        <div th:include="page/customer/menuLeft::#m"></div>
+                    </div>
+                    <div id="blog-post" class="col-lg-9">
+                        <div class="box">
+                            <div>
+                                <h2 style="text-align: center">查看预约单</h2>
+                                <div class="form-group">
+                                    <kbd style="font-size: 15px">预约类型:</kbd>&nbsp;
+                                    <span th:text="${reservation.type}" style="font-size: 20px"></span>
+                                </div>
+                                <div class="form-group">
+                                    <kbd style="font-size: 15px">宠物名称:</kbd>&nbsp;
+                                    <span th:text="${reservation.pet.name}" style="font-size: 20px"></span>
+                                </div>
+                                <div class="form-group">
+                                    <kbd style="font-size: 15px">预约日期:</kbd>&nbsp;
+                                    <span th:text="${#dates.format(reservation.reserveDate,'yyyy年MM月dd日 HH:mm')}" style="font-size: 20px"></span>
+                                </div>
+                                <div class="form-group">
+                                    <kbd style="font-size: 15px">预约描述:</kbd>
+                                    <span th:text="${reservation.description}" style="font-size: 20px"></span>
+                                </div>
+                                <div class="form-group">
+                                    <kbd style="font-size: 15px">预约状态:</kbd>
+                                    <span th:if="${reservation.status==0}" style="font-size: 20px">未处理(⊙﹏⊙)</span>
+                                    <span th:if="${reservation.status==1}" style="color: #0c9076;font-size: 20px">预约成功(๑•̀ㅂ•́)و✧</span>
+                                    <span th:if="${reservation.status==2}" style="color: red;font-size: 20px">预约失败〒▽〒</span>
+                                    <span th:if="${reservation.status==3}" style="color: darksalmon;font-size: 20px">预约结束┏(＾0＾)┛</span>
+                                </div>
+                                <div class="form-group"th:if="${reservation.user.trueName!=null}">
+                                    <kbd style="font-size: 15px">接受预约人:</kbd>
+                                    <span th:text="${reservation.user.trueName}" style="font-size: 20px"></span>
+                                </div>
+                                <div class="form-group" th:if="${reservation.remarks!=null}">
+                                    <kbd style="font-size: 15px">预约失败原因:</kbd>
+                                    <span th:text="${reservation.remarks}" style="font-size: 20px"></span>
+                                </div>
+                                <div class="text-center">
+                                    <a href="/reservation/myReservation/list/1" class="btn btn-primary"> 返回我的预约单
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.box-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

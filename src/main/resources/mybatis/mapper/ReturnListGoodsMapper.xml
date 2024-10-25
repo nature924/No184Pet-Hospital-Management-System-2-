@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--suppress ALL-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ledao.mapper.ReturnListGoodsMapper">
+
+    <resultMap id="ReturnListGoodsResult" type="ReturnListGoods">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="model" column="model"/>
+        <result property="goodsId" column="goodsId"/>
+        <result property="unit" column="unit"/>
+        <result property="price" column="price"/>
+        <result property="num" column="num"/>
+        <result property="total" column="total"/>
+        <association property="returnList" column="returnListId"
+                     select="com.ledao.mapper.ReturnListMapper.findById"></association>
+        <association property="type" column="typeId" select="com.ledao.mapper.GoodsTypeMapper.findById"></association>
+    </resultMap>
+    <select id="listByReturnListId" resultType="com.ledao.entity.ReturnListGoods">
+        select * from t_return_list_goods where returnListId=#{returnListId}
+    </select>
+    <delete id="deleteByReturnListId" parameterType="integer">
+        delete from t_return_list_goods where returnListId=#{returnListId}
+    </delete>
+    <select id="list" parameterType="map" resultMap="ReturnListGoodsResult">
+        select * from t_return_list_goods
+        <where>
+            <if test="returnListId!=null ">
+                and returnListId=#{returnListId}
+            </if>
+            <if test="type!=null and type.id!=null">
+                and typeId=#{type.id}
+            </if>
+            <if test="codeOrName!='' and codeOrName!=null">
+                and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+            </if>
+        </where>
+    </select>
+    <insert id="add" parameterType="ReturnListGoods">
+        insert into t_return_list_goods (code, goodsId, model, name, num, price, total, unit, returnListId, typeId) values (#{code},#{goodsId},#{model},#{name},#{num},#{price},#{total},#{unit},#{returnList.id},#{type.id});
+    </insert>
+    <select id="getReturnCount" parameterType="integer" resultType="java.lang.Long">
+        SELECT COUNT(*) AS returnCount FROM t_return_list_goods WHERE goodsId=#{goodsId};
+    </select>
+</mapper>

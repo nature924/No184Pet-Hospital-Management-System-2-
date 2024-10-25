@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--suppress ALL-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ledao.mapper.GoodsMapper">
+
+    <resultMap id="GoodsResult" type="Goods">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="name" column="name"/>
+        <result property="model" column="model"/>
+        <result property="unit" column="unit"/>
+        <result property="lastPurchasingPrice" column="lastPurchasingPrice"/>
+        <result property="purchasingPrice" column="purchasingPrice"/>
+        <result property="sellingPrice" column="sellingPrice"/>
+        <result property="inventoryQuantity" column="inventoryQuantity"/>
+        <result property="minNum" column="minNum"/>
+        <result property="state" column="state"/>
+        <result property="producer" column="producer"/>
+        <result property="remarks" column="remarks"/>
+        <result property="imageName" column="imageName"/>
+        <result property="hot" column="hot"/>
+        <result property="isNew" column="isNew"/>
+        <result property="specialPrice" column="specialPrice"/>
+        <result property="details" column="details"/>
+        <result property="releaseDate" column="releaseDate"/>
+        <association property="type" column="typeId" select="com.ledao.mapper.GoodsTypeMapper.findById"></association>
+    </resultMap>
+    <select id="findByTypeId" parameterType="integer" resultMap="GoodsResult">
+        select * from t_goods where typeId=#{typeId}
+    </select>
+    <select id="getMaxGoodsCode" resultType="java.lang.String">
+        select max(code) from t_goods
+    </select>
+    <select id="listAlarm" resultMap="GoodsResult">
+        select * from t_goods where inventoryQuantity &lt; minNum
+    </select>
+    <select id="list" parameterType="map" resultMap="GoodsResult">
+        select * from t_goods
+        <where>
+            <if test="name!=null and name!=''">
+                and name like #{name}
+            </if>
+            <if test="typeId!=null">
+                and typeId = #{typeId}
+            </if>
+            <if test="code!=null and code!=''">
+                and code like #{code}
+            </if>
+            <if test="codeOrName!='' and codeOrName!=null">
+                and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+            </if>
+        </where>
+        order by inventoryQuantity desc,releaseDate desc
+        <if test="start!=null and size!=null ">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getCount" parameterType="map" resultType="java.lang.Long">
+        select count(*) from t_goods
+        <where>
+            <if test="name!=null and name!=''">
+                and name like #{name}
+            </if>
+            <if test="typeId!=null">
+                and typeId = #{typeId}
+            </if>
+            <if test="code!=null and code!=''">
+                and code like #{code}
+            </if>
+            <if test="codeOrName!='' and codeOrName!=null">
+                and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+            </if>
+        </where>
+    </select>
+    <select id="listNoInventoryQuantityByCodeOrName" parameterType="map" resultMap="GoodsResult">
+        select * from t_goods
+        where 1=1
+        <if test="codeOrName!='' and codeOrName!=null">
+            and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+        </if>
+        and inventoryQuantity &lt;1
+        <if test="start!=null and size!=null ">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getCountNoInventoryQuantityByCodeOrName" parameterType="map" resultType="java.lang.Long">
+        select count(*) from t_goods
+        where 1=1
+        <if test="codeOrName != null and codeOrName != ''">
+            and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+        </if>
+        and inventoryQuantity &lt;1
+    </select>
+    <select id="listHasInventoryQuantityByCodeOrName" parameterType="map" resultMap="GoodsResult">
+        select * from t_goods
+        where 1=1
+        <if test="codeOrName!='' and codeOrName!=null">
+            and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+        </if>
+        and inventoryQuantity &gt;1
+        <if test="start!=null and size!=null ">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getCountHasInventoryQuantityByCodeOrName" parameterType="map" resultType="java.lang.Long">
+        select count(*) from t_goods
+        where 1=1
+        <if test="codeOrName!='' and codeOrName!=null">
+            and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+        </if>
+        and inventoryQuantity &gt;1
+    </select>
+    <delete id="delete" parameterType="integer">
+        delete from t_goods where id=#{id}
+    </delete>
+    <select id="findById" parameterType="integer" resultMap="GoodsResult">
+        select * from t_goods where id=#{id}
+    </select>
+    <insert id="add" parameterType="Goods">
+        insert into t_goods (code, inventoryQuantity, lastPurchasingPrice, minNum, model, name, producer, purchasingPrice, remarks, sellingPrice, state, unit, typeId,hot,specialPrice,imageName,details,isNew,releaseDate)
+        values (#{code},#{inventoryQuantity},#{lastPurchasingPrice},#{minNum},#{model},#{name},#{producer},#{purchasingPrice},#{remarks},#{sellingPrice},#{state},#{unit},#{type.id},#{hot},#{specialPrice},#{imageName},#{details},#{isNew},now())
+    </insert>
+    <update id="update" parameterType="Goods">
+        update t_goods
+        <set>
+            <if test="code != null and code != ''">
+                code=#{code},
+            </if>
+            <if test="inventoryQuantity != null">
+                inventoryQuantity=#{inventoryQuantity},
+            </if>
+            <if test="lastPurchasingPrice != null">
+                lastPurchasingPrice=#{lastPurchasingPrice},
+            </if>
+            <if test="minNum != null">
+                minNum=#{minNum},
+            </if>
+            <if test="model != null and model != ''">
+                model=#{model},
+            </if>
+            <if test="name != null and name != ''">
+                name=#{name},
+            </if>
+            <if test="producer != null and producer != ''">
+                producer=#{producer},
+            </if>
+            <if test="purchasingPrice != null">
+                purchasingPrice=#{purchasingPrice},
+            </if>
+            <if test="remarks != null and remarks != ''">
+                remarks=#{remarks},
+            </if>
+            <if test="sellingPrice != null">
+                sellingPrice=#{sellingPrice},
+            </if>
+            <if test="state != null">
+                state=#{state},
+            </if>
+            <if test="unit != null and unit != ''">
+                unit=#{unit},
+            </if>
+            <if test="type.id!=null">
+                typeId=#{type.id},
+            </if>
+            <if test="hot != null">
+                hot=#{hot},
+            </if>
+            <if test="specialPrice != null">
+                specialPrice=#{specialPrice},
+            </if>
+            <if test="imageName != null and imageName != ''">
+                imageName=#{imageName},
+            </if>
+            <if test="details != null and details != ''">
+                details=#{details},
+            </if>
+            <if test="isNew != null">
+                isNew=#{isNew},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+    <select id="listInventory" parameterType="map" resultMap="GoodsResult">
+        select * from t_goods
+        where 1=1
+        <if test="typeId!=null ">
+            and typeId=#{typeId}
+        </if>
+        <if test="codeOrName!='' and codeOrName!=null">
+            and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+        </if>
+        <if test="start!=null and size!=null ">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getCountInventory" parameterType="map" resultType="java.lang.Long">
+        select count(*) from t_goods
+        where 1=1
+        <if test="typeId!=null ">
+            and typeId=#{typeId}
+        </if>
+        <if test="codeOrName!='' and codeOrName!=null">
+            and concat(`code`, `name`) like concat('%',#{codeOrName},'%')
+        </if>
+    </select>
+    <select id="listByBigTypeId" parameterType="map" resultMap="GoodsResult">
+        SELECT * FROM t_goods WHERE typeId IN (SELECT id FROM t_goodstype
+        <where>
+            <if test="typeId!=null"></if>
+            and FIND_IN_SET( #{typeId}, pId))
+        </where>
+        order by releaseDate,inventoryQuantity desc
+        <if test="start!=null and size!=null">
+            limit #{start},#{size}
+        </if>
+    </select>
+    <select id="getCountByBigTypeId" parameterType="map" resultType="java.lang.Long">
+        SELECT count(*) FROM t_goods WHERE typeId IN (SELECT id FROM t_goodstype
+        <where>
+            <if test="typeId!=null"></if>
+            and FIND_IN_SET( #{typeId}, pId))
+        </where>
+    </select>
+    <select id="findOldGoods" resultMap="GoodsResult">
+        select * from t_goods where id not in(select id from t_goods where DATE_ADD(releaseDate,interval 3 month)>now()) and isNew=1;
+    </select>
+</mapper>

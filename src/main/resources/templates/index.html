@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}+'--LeDao宠物医院'"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" th:href="@{/static/vendor/bootstrap/css/bootstrap.min.css}">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" th:href="@{/static/vendor/font-awesome/css/font-awesome.min.css}">
+    <!-- owl carousel-->
+    <link rel="stylesheet" th:href="@{/static/vendor/owl.carousel/assets/owl.carousel.css}">
+    <link rel="stylesheet" th:href="@{/static/vendor/owl.carousel/assets/owl.theme.default.css}">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" id="theme-stylesheet" th:href="@{/static/css/style.default.css}">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" th:href="@{/static/css/custom.css}">
+    <link th:href="@{/static/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"
+          media="screen">
+    <!-- Favicon-->
+    <link rel="short icon" th:href="@{/static/images/favicon.ico}">
+    <!-- Tweaks for older IEs--><!--[if lt IE 9]>
+    <script type="text/javascript" th:src="@{https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js}"></script>
+    <script type="text/javascript" th:src="@{https://oss.maxcdn.com/respond/1.4.2/respond.min.js}"></script><![endif]-->
+    <script type="text/javascript" th:src="@{/static/vendor/jquery/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/vendor/jquery.cookie/jquery.cookie.js}"></script>
+    <script type="text/javascript" th:src="@{/static/vendor/owl.carousel/owl.carousel.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/vendor/owl.carousel2.thumbs/owl.carousel2.thumbs.js}"></script>
+    <script type="text/javascript" th:src="@{/static/js/front.js}"></script>
+    <script src="//webapi.amap.com/maps?v=1.3&key=8325164e247e15eea68b59e89200988b"></script>
+    <!--高德地图样式代码-->
+    <style>
+        body {
+            margin: 0;
+            font: 13px/1.5 "Microsoft YaHei", "Helvetica Neue", "Sans-Serif";
+        }
+
+        .my-map {
+            margin: 0 auto;
+            width: 750px;
+            height: 350px;
+        }
+
+        .amap-container {
+            height: 100%;
+        }
+    </style>
+    <script th:inline="javascript">
+        if (window.name != "refresh") {
+            location.reload();
+            window.name = "refresh";
+        } else {
+            window.name = "";
+        }
+        window.onload = function () {
+            var error = [[${error}]];
+            if (error != null) {
+                alert(error);
+            }
+            var systemMessage = [[${systemMessage}]];
+            if (systemMessage != null) {
+                alert(systemMessage);
+            }
+            var successRegister = [[${successRegister}]];
+            if (successRegister == true) {
+                alert("添加成功!");
+            }
+            var successLogin = [[${successLogin}]];
+            if (successLogin == true) {
+                alert("登录成功,跳转到主页...");
+            } else if (successLogin == false) {
+                alert("登录失败,用户名或密码错误!请重新登录...");
+            }
+            var successModify = [[${successModify}]];
+            if (successModify == true) {
+                alert("修改成功!");
+            }
+        }
+        //返回顶部图标出现或者消失
+        $(function () {
+            $(function () {
+                $(window).scroll(function () {
+                    if ($(window).scrollTop() > 100) {
+                        $("#gotop").fadeIn(1000);//一秒渐入动画
+                    } else {
+                        $("#gotop").fadeOut(1000);//一秒渐隐动画
+                    }
+                });
+
+                $("#gotop").click(function () {
+                    $('body,html').animate({scrollTop: 0}, 1000);
+                });
+            });
+        });
+
+        //客户注销登录
+        function logout() {
+            if (confirm("你确定要退出系统吗?")) {
+                window.location.href = "/customer/logout";
+                alert("您已成功退出!");
+            }
+        }
+
+        //客户提交订单
+        function submitOrder() {
+            if (confirm("你确定要提交订单吗?(购物车将被清空!)")) {
+                window.location.href = "/shopping/submitOrder";
+                alert("订单提交成功!");
+            }
+        }
+
+        //添加商品到购物车
+        function addShoppingCart(goodsId) {
+            $.post("/shopping/addShoppingCartItem", {goodsId: goodsId}, function (result) {
+                if (result.success) {
+                    alert("已成功加入购物车!");
+                    location.reload();
+                } else {
+                    alert("添加失败!")
+                }
+            }, "json");
+        }
+
+        //检验用户名是否存在
+        function checkUserName(userName) {
+            if (userName == "") {
+                $("#userErrorInfo").html("用户名不能为空！");
+                $("#userSuccessInfo").html("");
+                $("#userName").focus();
+                return;
+            }
+            $.post("/customer/existUserWithUserName", {userName: userName},
+                function (result) {
+                    if (result.success) {
+                        $("#userErrorInfo").html("该用户名已被注册,请重新输入!");
+                        $("#userSuccessInfo").html("");
+                        $("#userName").focus();
+                    } else {
+                        $("#userSuccessInfo").html("该用户名可以使用!");
+                        $("#userErrorInfo").html("");
+                    }
+                }
+            );
+        }
+
+        //注册验证
+        function checkCustomerAddValue() {
+            var userName = $("#userName").val();
+            var password1 = $("#password1").val();
+            var password2 = $("#password2").val();
+            if (password1.length < 6) {
+                alert("密码长度要大于5!");
+                return false;
+            }
+            if (password1 != password2) {
+                alert("密码和确认密码不相同,请重新输入!");
+                return false;
+            }
+            $.post("/customer/existUserWithUserName", {userName: userName},
+                function (result) {
+                    if (result.success) {
+                        alert("您要注册的用户名已被注册,请重新输入!");
+                        return false;
+                    }
+                }
+            );
+            alert("注册成功!现在可以登录了...");
+            return true;
+        }
+
+        //删除购物车中的商品
+        function removeShoppingCartItem(goodsId) {
+            if (confirm("您确定要要从购物车中删除这个商品吗?")) {
+                window.location.href = "/shopping/removeShoppingCartItem?goodsId=" + goodsId;
+                alert("删除成功!");
+            }
+        }
+
+        //刷新购物车商品信息,key==0时表示点击按钮改变数量,key==1时表示用户输入改变数量
+        function refreshShoppingCart(goodsId, count, key) {
+            $.post("/shopping/updateShoppingCartItem", {goodsId: goodsId, count: count, key: key},
+                function (result) {
+                    if (result.success) {
+
+                    } else {
+
+                    }
+                }
+            );
+        }
+
+        //点击添加按钮、减少按钮、输入商品数量实现修改购物车商品数量
+        $(document).ready(function () {
+            $(".add").click(function () {
+                var goodsId = $(this).parent().find('input[id=goods_id]').val();
+                var count = $(this).parent().find('input[class=text_box]').val();
+                var stock = $(this).parent().find('input[id=goods_stock]').val();
+                count = parseInt(count) + 1;
+                if (count > stock) {
+                    alert("购买数量不能大于库存!");
+                }
+                refreshShoppingCart(goodsId, count, 0);
+            });
+            $(".min").click(function () {
+                var goodsId = $(this).parent().find('input[id=goods_id]').val();
+                var count = $(this).parent().find('input[class=text_box]').val();
+                count = parseInt(count) - 1;
+                if (count < 1) {
+                    alert("购买数量不能小于1!");
+                }
+                refreshShoppingCart(goodsId, count, 0);
+            });
+            $(".text_box").blur(function () {
+                var goodsId = $(this).parent().find('input[id=goods_id]').val();
+                var count = $(this).parent().find('input[class=text_box]').val();
+                var stock = $(this).parent().find('input[id=goods_stock]').val();
+                if (count < 1) {
+                    count = 1;
+                    alert("购买数量不能小于1!");
+                }
+                if (count > stock) {
+                    alert("购买数量不能大于库存!");
+                }
+                refreshShoppingCart(goodsId, count, 1);
+                location.reload();
+            });
+        });
+
+        //客户删除自己的宠物
+        function deletePet(petId) {
+            if (confirm("您确定要删除这个宠物吗?")) {
+                window.location.href = "/pet/deletePet?petId=" + petId;
+                alert("删除成功!");
+            }
+        }
+
+        //添加收藏
+        function addFavorite(goodsId) {
+            var str = 'div' + goodsId;
+            var url = "/goods/addFavorite?goodsId=" + goodsId + "&str=" + str;
+            $(".div11").load(url);
+            location.reload();
+        }
+
+        //取消收藏
+        function deleteFavorite(goodsId) {
+            var str = 'div' + goodsId;
+            var url = "/goods/deleteFavorite?goodsId=" + goodsId + "&str=" + str;
+            $(".div11").load(url);
+            location.reload();
+        }
+
+        $(document).ready(function () {
+            var dateStr = $("#reservationModify_date2").val();
+            $('#reservationModify_date').attr('value', dateStr);
+            var description = $("#description3").val();
+            $("#description").val(description);
+            $("#description2").val(description);
+            var petId = $("#petIdModify2").val();
+            $("#petIdModify").val(petId);
+            var type = $("#typeModify2").val();
+            $("#typeModify").val(type);
+            var inquiryContent2 = $("#inquiryContent2").val();
+            $("#inquiryContent").val(inquiryContent2);
+        });
+
+        //客户删除自己的预约单(系统未处理的)
+        function deleteReservation(reservationId) {
+            if (confirm("您确定要删除这个预约单吗?")) {
+                window.location.href = "/reservation/delete?reservationId=" + reservationId;
+                alert("删除成功!");
+            }
+        }
+
+        //客户删除自己的问诊记录(系统未处理的)
+        function deleteInquiry(inquiryId) {
+            if (confirm("您确定要删除这条问诊记录吗?")) {
+                window.location.href = "/inquiry/deleteInquiry?inquiryId=" + inquiryId;
+                alert("删除成功!");
+            }
+        }
+
+        //客户取消未发货的订单
+        function cancelOrder(saleListId) {
+            if (confirm("您确定要取消这个订单吗?")) {
+                window.location.href = "/saleList/cancelOrder?saleListId=" + saleListId;
+                alert("订单已成功取消!");
+            }
+        }
+
+        //客户确认收货
+        function confirmDispatch(saleListId) {
+            if (confirm("您确定要确认收货吗?")) {
+                window.location.href = "/saleList/confirmDispatch?saleListId=" + saleListId;
+                alert("订单已确认收货!");
+            }
+        }
+
+        //客户确认支付订单
+        function pay(saleListId) {
+            if (confirm("您确定要支付吗?")) {
+                window.location.href = "/saleList/payPage?saleListId=" + saleListId;
+            }
+        }
+
+        //客户评价订单商品
+        function comment(saleListGoodsId) {
+            if (confirm("您确定要评价这个商品吗?")) {
+                window.location.href = "/comment/commentPage?saleListGoodsId=" + saleListGoodsId;
+            }
+        }
+
+        //客户删除自己的退货信息
+        function deleteReturnApply(returnApplyId) {
+            if (confirm("您确定要删除这个退货信息吗?")) {
+                window.location.href = "/returnApply/delete?returnApplyId=" + returnApplyId;
+                alert("删除成功!");
+            }
+        }
+    </script>
+</head>
+<body>
+<span name="gotop"></span>
+<a href="#gotop" title="返回顶部">
+    <img th:src="@{/static/images/img/top.png}" id="gotop" alt=""
+         style="position: fixed;bottom: 10%;display: none;height: 40px;margin-left: 90%">
+</a>
+<header class="header mb-5">
+    <div th:include="common/head::#h"></div>
+    <div th:include="common/menu::#m"></div>
+    <div th:include="${mainPage}::${mainPageKey}"></div>
+    <div th:include="common/foot2::#f"></div>
+</header>
+</body>
+<script>
+    !function () {
+        var infoWindow, map, level = 14,
+            center = {lng: 110.359467, lat: 22.786445},
+            features = [];
+
+        function loadFeatures() {
+            for (var feature, data, i = 0, len = features.length, j, jl, path; i < len; i++) {
+                data = features[i];
+                switch (data.type) {
+                    case "Marker":
+                        feature = new AMap.Marker({
+                            map: map,
+                            position: new AMap.LngLat(data.lnglat.lng, data.lnglat.lat),
+                            zIndex: 3,
+                            extData: data,
+                            offset: new AMap.Pixel(data.offset.x, data.offset.y),
+                            title: data.name,
+                            content: '<div class="icon icon-' + data.icon + ' icon-' + data.icon + '-' + data.color + '"></div>'
+                        });
+                        break;
+                    case "Polyline":
+                        for (j = 0, jl = data.lnglat.length, path = []; j < jl; j++) {
+                            path.push(new AMap.LngLat(data.lnglat[j].lng, data.lnglat[j].lat));
+                        }
+                        feature = new AMap.Polyline({
+                            map: map,
+                            path: path,
+                            extData: data,
+                            zIndex: 2,
+                            strokeWeight: data.strokeWeight,
+                            strokeColor: data.strokeColor,
+                            strokeOpacity: data.strokeOpacity
+                        });
+                        break;
+                    case "Polygon":
+                        for (j = 0, jl = data.lnglat.length, path = []; j < jl; j++) {
+                            path.push(new AMap.LngLat(data.lnglat[j].lng, data.lnglat[j].lat));
+                        }
+                        feature = new AMap.Polygon({
+                            map: map,
+                            path: path,
+                            extData: data,
+                            zIndex: 1,
+                            strokeWeight: data.strokeWeight,
+                            strokeColor: data.strokeColor,
+                            strokeOpacity: data.strokeOpacity,
+                            fillColor: data.fillColor,
+                            fillOpacity: data.fillOpacity
+                        });
+                        break;
+                    default:
+                        feature = null;
+                }
+                if (feature) {
+                    AMap.event.addListener(feature, "click", mapFeatureClick);
+                }
+            }
+        }
+
+        function mapFeatureClick(e) {
+            if (!infoWindow) {
+                infoWindow = new AMap.InfoWindow({autoMove: true});
+            }
+            var extData = e.target.getExtData();
+            infoWindow.setContent("<h5>" + extData.name + "</h5><div>" + extData.desc + "</div>");
+            infoWindow.open(map, e.lnglat);
+        }
+
+        map = new AMap.Map("mapContainer", {center: new AMap.LngLat(center.lng, center.lat), level: level});
+
+        loadFeatures();
+
+        map.on('complete', function () {
+            map.plugin(["AMap.ToolBar", "AMap.OverView", "AMap.Scale"], function () {
+                map.addControl(new AMap.ToolBar);
+                map.addControl(new AMap.OverView({isOpen: true}));
+                map.addControl(new AMap.Scale);
+            });
+        })
+
+    }();
+</script>
+</html>

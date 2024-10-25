@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="b">
+    <div id="all" style="padding-top: 20px">
+        <div id="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <!-- breadcrumb-->
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <i class="fa fa-eye" style="padding-top: 2px"></i>当前位置:&nbsp;&nbsp;
+                                <li class="breadcrumb-item"><a href="/">主页</a></li>
+                                <li class="breadcrumb-item"><span>修改预约单</span></li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="card sidebar-menu mb-4">
+                            <div class="card-header">
+                                <h3 class="h4 panel-title">预约分类</h3>
+                            </div>
+                            <div class="card-body">
+                                <ul class="nav flex-column nav-pills">
+                                    <li>
+                                        <a href="/reservation/addDoctorReservation" class="nav-link">预约医生</a>
+                                    </li>
+                                    <li>
+                                        <a href="/reservation/addBeauticianReservation" class="nav-link">预约美容师</a>
+                                    </li>
+                                    <li>
+                                        <a href="/reservation/myReservation/list/1" class="nav-link">返回我的预约记录</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- /.col-lg-3-->
+                    </div>
+                    <div id="blog-post" class="col-lg-9">
+                        <div class="box">
+                            <h1 style="text-align: center">修改预约单</h1>
+                            <form action="/reservation/save" method="post">
+                                <div class="form-group form-inline">
+                                    <label>宠物名称:</label>&nbsp;
+                                    <select id="petIdModify" name="petId" required="required" class="form-control">
+                                        <div th:each="pet:${petList}">
+                                            <option th:text="${pet.name}" th:value="${pet.id}"></option>
+                                        </div>
+                                    </select>
+                                    <input type="hidden" id="petIdModify2" th:value="${reservation.pet.id}">
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label>预约类型:</label>&nbsp;
+                                    <select id="typeModify" name="type" required="required" class="form-control" th:value="${reservation.type}">
+                                        <option value="预约医生">预约医生</option>
+                                        <option value="预约美容师">预约美容师</option>
+                                    </select>
+                                    <input type="hidden" id="typeModify2" th:value="${reservation.type}">
+                                </div>
+                                <div class="form-group form-inline">
+                                    <label>预约日期:</label>
+                                    <input type="date" id="reservationModify_date" name="date" required="required" th:value="${reservation.reserveDate}" class="form-control" style="width: 160px;height: 37px"/>
+                                    <input type="hidden" id="reservationModify_date2" required="required" th:value="${#dates.format(reservation.reserveDate,'yyyy-MM-dd')}" class="form-control" style="width: 160px;height: 30px"/>
+                                    <input type="hidden" name="id" th:value="${reservation.id}">
+                                </div>
+                                <div class="form-group">
+                                    <label>预约描述:</label>
+                                    <textarea id="description" name="description" class="form-control" rows="5" required="required" th:value="${reservation.description}" placeholder="请填写您的宠物病况..." th:if="${reservation.type=='预约医生'}"></textarea>
+                                    <textarea id="description2" name="description" class="form-control" rows="5" required="required" th:value="${reservation.description}" placeholder="您的宠物是否有过敏史?有的话请详细填写,没有请填无..." th:if="${reservation.type=='预约美容师'}"></textarea>
+                                    <input type="hidden" id="description3" th:value="${reservation.description}">
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">立即修改</button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.box-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

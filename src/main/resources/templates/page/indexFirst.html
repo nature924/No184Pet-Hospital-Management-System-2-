@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<!--suppress ALL-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="b">
+    <div id="all">
+        <div id="content">
+            <!--第一个轮播图-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="main-slider" class="owl-carousel owl-theme">
+                            <div class="item" th:each="firstCarousel:${application.firstCarouselList}">
+                                <img th:src="@{'/static/images/carouselImage/'+${firstCarousel.getImageName()}}"
+                                     style="height: 460px"
+                                     class="img-fluid">
+                            </div>
+                        </div>
+                        <!-- /#main-slider-->
+                    </div>
+                </div>
+            </div>
+            <!--
+            *** ADVANTAGES HOMEPAGE ***
+            _________________________________________________________
+            -->
+            <div id="advantages">
+                <div class="container">
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
+                                <div class="icon"><i class="fa fa-heart"></i></div>
+                                <h3><a href="#">爱客户</a></h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
+                                <div class="icon"><i class="fa fa-tags"></i></div>
+                                <h3><a href="#">服务好</a></h3>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="box clickable d-flex flex-column justify-content-center mb-0 h-100">
+                                <div class="icon"><i class="fa fa-thumbs-up"></i></div>
+                                <h3><a href="#">让客户满意</a></h3>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row-->
+                </div>
+                <!-- /.container-->
+            </div>
+            <!-- /#advantages-->
+            <div class="tlinks">Collect from <a href="http://www.cssmoban.com/" title="网站模板">网站模板</a></div>
+            <!-- *** ADVANTAGES END ***-->
+            <!--
+            *** HOT PRODUCT SLIDESHOW ***
+            _________________________________________________________
+            -->
+            <!--医疗团队-->
+            <div id="hot">
+                <div class="box py-4">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div>
+                                    <h2 class="mb-0">医疗团队</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="product-slider owl-carousel owl-theme">
+                        <div class="item" th:each="doctor:${application.doctorList}">
+                            <div class="product">
+                                <div class="flip-container">
+                                    <div class="flipper">
+                                        <div class="front"><a href="detail.html"><img
+                                                th:src="@{'/static/images/userImage/'+${doctor.getImageName()}}"
+                                                alt="" class="img-fluid" style="height: 250px"></a>
+                                        </div>
+                                        <div class="back"><a href="detail.html"><img
+                                                th:src="@{'/static/images/userImage/'+${doctor.getImageName()}}"
+                                                alt="" class="img-fluid" style="height: 250px"></a></div>
+                                    </div>
+                                </div>
+                                <a href="detail.html" class="invisible"><img
+                                        th:src="@{'/static/images/userImage/'+${doctor.getImageName()}}" alt=""
+                                        class="img-fluid" style="height: 250px"></a>
+                                <div class="text">
+                                    <h3><a href="detail.html" th:text="${doctor.getTrueName()}"></a></h3>
+                                </div>
+                            </div>
+                            <!-- /.product-->
+                        </div>
+                        <!-- /.product-slider-->
+                    </div>
+                    <!-- /.container-->
+                </div>
+                <!-- /#hot-->
+                <!-- *** HOT END ***-->
+            </div>
+            <!--
+            *** GET INSPIRED ***
+            _________________________________________________________
+            -->
+            <div class="box text-center">
+                <div class="container">
+                    <div class="col-md-12">
+                        <h2 class="mb-0" style="color: #64c4af">医疗环境</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="box slideshow">
+                        <p class="lead">
+                            LeDao宠物医院是桂林市规模较大的一所专业化医院.以精湛的医术,热情周到的服务,良好的职业操守,赢得广大宠物爱好者的认可.医院包括全科门诊及住院治疗,对各种小动物疾病、疑难杂症及各科手术都具备了丰富的临床经验,形成了一套独立,严谨的诊疗体系.</p>
+                        <div id="get-inspired" class="owl-carousel owl-theme">
+                            <div class="item" th:each="secondCarousel:${application.secondCarouselList}">
+                                <img th:src="@{'/static/images/carouselImage/'+${secondCarousel.getImageName()}}"
+                                     alt="Get inspired" class="img-fluid" style="height: 460px">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- *** GET INSPIRED END ***-->
+            <!--
+            *** BLOG HOMEPAGE ***
+            _________________________________________________________
+            -->
+            <!--医疗设备-->
+            <div id="hot1">
+                <div class="box py-4">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2 class="mb-0">医疗设备</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="product-slider owl-carousel owl-theme">
+                        <div class="item" th:each="equipmentType:${application.equipmentTypeList}">
+                            <div class="product">
+                                <div class="flip-container">
+                                    <div class="flipper">
+                                        <div class="front"><img
+                                                th:src="@{'/static/images/equipmentTypeImage/' + ${equipmentType.getImageName()}}"
+                                                alt="" class="img-fluid" style="height: 250px">
+                                        </div>
+                                        <div class="back"><a href="#"><img
+                                                th:src="@{'/static/images/equipmentTypeImage/' + ${equipmentType.getImageName()}}"
+                                                alt="" class="img-fluid" style="height: 250px"></a></div>
+                                    </div>
+                                </div>
+                                <a class="invisible"><img
+                                        th:src="@{'/static/images/equipmentTypeImage/' + ${equipmentType.getImageName()}}"
+                                        alt=""
+                                        class="img-fluid" style="height: 250px"></a>
+                                <div class="text">
+                                    <h3 th:text="${equipmentType.getName()}"><a href="detail.html"></a></h3>
+                                </div>
+                            </div>
+                            <!-- /.product-->
+                        </div>
+
+                        <!-- /.product-slider-->
+                    </div>
+                    <!-- /.container-->
+                </div>
+                <!-- /#hot-->
+                <!-- *** HOT END ***-->
+            </div>
+            <div class="box text-center">
+                <div class="container">
+                    <div class="col-md-12">
+                        <h2 class="text-uppercase" style="color: #64c4af;font-weight: normal">了解我们</h2>
+                    </div>
+                </div>
+            </div>
+            <!--了解我们-->
+            <div class="container">
+                <div class="col-md-12">
+                    <div id="blog-homepage" class="row">
+                        <div class="col-sm-6" th:each="articleType:${application.articleTypeList1}" th:if="${articleTypeStat.count<5}">
+                            <div class="post">
+                                <h4><a th:href="'/article/list/1?typeId='+${articleType.getId()}"
+                                       th:text="${articleType.getName()}"></a></h4>
+                                <hr>
+                                <div th:each="article:${articleType.articleList}" th:if="${articleStat.count<=5}">
+                                    <p class="intro"><strong
+                                            th:text="'['+${#dates.format(article.getReleaseDate(),'yyyy-MM-dd')}+']'"></strong><a
+                                            th:href="'/article/'+${article.getId()}" style="text-decoration:none;"
+                                            th:title="${article.getTitle()}">&nbsp;&nbsp;<span
+                                            th:text="${article.getTitle()}"></span></a>
+                                    </p>
+                                </div>
+                                <p class="read-more"><a th:href="'/article/list/1?typeId='+${articleType.getId()}"
+                                                        class="btn btn-primary">更多...</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /#blog-homepage-->
+                </div>
+            </div>
+            <!-- /.container-->
+            <!-- *** BLOG HOMEPAGE END ***-->
+        </div>
+    </div>
+</div>
+</body>
+</html>
